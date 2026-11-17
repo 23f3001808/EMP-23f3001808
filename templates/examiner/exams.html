@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, empty %}
+{% block title %}My examinations{% endblock %}
+{% block content %}
+<h3 class="mb-3">My examinations</h3>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead><tr><th>Course</th><th>Examination</th><th>Type</th><th>Slot creation</th><th>Booking</th><th>Status</th><th></th></tr></thead><tbody>
+  {% for e in exams %}
+  <tr><td>{{ e.course_code }}</td><td class="fw-semibold">{{ e.name }}</td><td>{{ e.exam_type }}</td><td class="small">{{ e.slot_create_start|fdate }} → {{ e.slot_create_end|fdate }}</td><td class="small">{{ e.book_start|fdate }} → {{ e.book_end|fdate }}</td><td>{{ badge(e.status) }}</td>
+    <td class="text-end"><a class="btn btn-sm btn-primary" href="{{ url_for('examiner.exam_slots', exam_id=e.id) }}">Manage slots</a></td></tr>
+  {% else %}{{ empty(7, 'No examinations have been assigned to you yet.') }}{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, post_btn, empty %}
+{% block title %}My bookings{% endblock %}
+{% block content %}
+<h3 class="mb-3">My bookings &amp; history</h3>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead><tr><th>#</th><th>Examination</th><th>Date</th><th>Time</th><th>Examiner</th><th>Booked on</th><th>Status</th><th></th></tr></thead><tbody>
+  {% for b in bookings %}
+  <tr><td>{{ b.id }}</td><td>{{ b.exam_name }}<div class="small text-muted">{{ b.course_code }}</div></td><td>{{ b.slot_date|fdate }}</td><td>{{ b.start_time|ftime }}–{{ b.end_time|ftime }}</td><td>{{ b.examiner_name }}</td><td class="small">{{ b.booking_date|fdt }}</td><td>{{ badge(b.status) }}</td>
+    <td class="text-end">{% if b.status == 'Booked' and today <= b.book_end and b.exam_status != 'Completed' %}{{ post_btn(url_for('student.cancel', booking_id=b.id), 'Cancel', 'outline-danger', confirm='Cancel this booking?') }}{% elif b.status == 'Booked' %}<span class="small text-muted">deadline passed</span>{% endif %}</td></tr>
+  {% else %}{{ empty(8, 'You have not booked any slots yet.') }}{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

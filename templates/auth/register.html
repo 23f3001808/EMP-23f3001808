@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% from '_macros.html' import field %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6">
+  <h2 class="text-center mb-4">Create your account</h2>
+  <div class="card shadow-sm"><div class="card-body p-4">
+    <form method="post">
+      {{ field('Full name', 'full_name', d) }}
+      {{ field('Email', 'email', d, 'email') }}
+      {{ field('Password (min 6 characters)', 'password', {}, 'password') }}
+      <div class="mb-3"><label class="form-label d-block">I am a</label>
+        <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="role" id="r_s" value="student" {% if d.get('role') != 'examiner' %}checked{% endif %}><label class="form-check-label" for="r_s">Student</label></div>
+        <div class="form-check form-check-inline"><input class="form-check-input" type="radio" name="role" id="r_e" value="examiner" {% if d.get('role') == 'examiner' %}checked{% endif %}><label class="form-check-label" for="r_e">Examiner (needs admin approval)</label></div>
+      </div>
+      {{ field('Phone number', 'phone', d, 'tel', extra='pattern="\\+?[0-9]{10,13}" title="10 to 13 digits"') }}
+      {{ field('Department', 'department', d) }}
+      <button class="btn btn-primary w-100">Sign up</button>
+    </form>
+    <p class="text-center mt-3 mb-0 small">Already registered? <a href="{{ url_for('auth.login') }}">Login</a></p>
+  </div></div>
+</div></div>
+{% endblock %}

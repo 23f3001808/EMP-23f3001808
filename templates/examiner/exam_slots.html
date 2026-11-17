@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, field, post_btn, empty %}
+{% block title %}Slots – {{ exam.name }}{% endblock %}
+{% block content %}
+<h3 class="mb-1">{{ exam.name }} {{ badge(exam.status) }}</h3>
+<p class="text-muted">{{ exam.course_code }} · {{ exam.exam_type }} · {{ exam.duration }} min · slot creation {{ exam.slot_create_start|fdate }} → {{ exam.slot_create_end|fdate }}</p>
+<div class="row g-4">
+  <div class="col-lg-4"><div class="card shadow-sm"><div class="card-body">
+    <h5>Create a slot</h5>
+    {% if slot_creation_open(exam) %}
+    <form method="post">
+      {{ field('Date', 'slot_date', d, 'date', extra='min="' ~ today ~ '"') }}
+      <div class="row"><div class="col-6">{{ field('Start time', 'start_time', d, 'time') }}</div><div class="col-6">{{ field('End time', 'end_time', d, 'time') }}</div></div>
+      {{ field('Maximum capacity', 'capacity', d, 'number', extra='min="1" max="500"') }}
+      <button class="btn btn-primary w-100">Create slot</button>
+    </form>
+    {% else %}<div class="alert alert-warning mb-0">Slot creation is not open for this examination right now. It opens when the admin sets the status to “Slot Creation” and today falls inside the slot-creation dates.</div>{% endif %}
+  </div></div></div>
+  <div class="col-lg-8"><div class="card shadow-sm"><div class="card-body">
+    <h5>My slots for this examination</h5>
+    <div class="table-responsive"><table class="table table-sm align-middle mb-0"><thead><tr><th>Date</th><th>Time</th><th>Booked</th><th>Status</th><th></th></tr></thead><tbody>
+      {% for s in slots %}
+      <tr><td>{{ s.slot_date|fdate }}</td><td>{{ s.start_time|ftime }}–{{ s.end_time|ftime }}</td><td>{{ s.booked }} / {{ s.capacity }}</td><td>{{ badge(s.status) }}</td>
+        <td class="text-end">{% if s.exam_status in ('Draft', 'Slot Creation') and s.booked == 0 %}
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('examiner.slot_edit', slot_id=s.id) }}">Edit</a>
+          {{ post_btn(url_for('examiner.slot_delete', slot_id=s.id), 'Remove', 'outline-danger', confirm='Remove this slot?') }}
+          {% else %}<span class="small text-muted">locked</span>{% endif %}</td></tr>
+      {% else %}{{ empty(5, 'You have not created slots for this examination.') }}{% endfor %}
+    </tbody></table></div>
+  </div></div></div>
+</div>
+{% endblock %}

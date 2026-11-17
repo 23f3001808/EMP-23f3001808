@@ -1,0 +1,23 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, post_btn, empty %}
+{% block title %}Examiners{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="mb-0">Examiners</h3>
+  <a class="btn btn-success" href="{{ url_for('admin.examiner_new') }}">+ Add examiner</a></div>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-6"><input class="form-control" name="q" value="{{ q }}" placeholder="Search by name, email, department or ID"></div>
+  <div class="col-md-3"><select class="form-select" name="status"><option value="">All statuses</option>
+    {% for s in ['Pending','Approved','Rejected','Deactivated'] %}<option {{ 'selected' if s == status }}>{{ s }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><button class="btn btn-primary">Filter</button></div>
+</form>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Department</th><th>Exams</th><th>Slots</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody>
+  {% for x in examiners %}
+  <tr><td>EXM{{ '%04d' % x.id }}</td><td><a href="{{ url_for('admin.examiner_view', examiner_id=x.id) }}">{{ x.full_name }}</a></td><td class="small">{{ x.email }}<br>{{ x.phone }}</td><td>{{ x.department }}</td><td>{{ x.exam_count }}</td><td>{{ x.slot_count }}</td><td>{{ badge(x.status) }}</td>
+    <td class="text-end">
+      {% if x.status == 'Pending' %}{{ post_btn(url_for('admin.examiner_status', examiner_id=x.id), 'Approve', 'success', 'action', 'approve') }} {{ post_btn(url_for('admin.examiner_status', examiner_id=x.id), 'Reject', 'outline-danger', 'action', 'reject') }}
+      {% elif x.status == 'Approved' %}{{ post_btn(url_for('admin.examiner_status', examiner_id=x.id), 'Deactivate', 'outline-danger', 'action', 'deactivate') }}
+      {% else %}{{ post_btn(url_for('admin.examiner_status', examiner_id=x.id), 'Reactivate', 'outline-success', 'action', 'reactivate') }}{% endif %}
+    </td></tr>
+  {% else %}{{ empty(8, 'No examiners found.') }}{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

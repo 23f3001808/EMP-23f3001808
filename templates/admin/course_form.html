@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% from '_macros.html' import field, select %}
+{% block title %}{{ 'Edit' if course else 'New' }} course{% endblock %}
+{% block content %}
+<div class="card shadow-sm col-md-7"><div class="card-body p-4">
+  <h4 class="mb-3">{{ 'Edit course' if course else 'New course' }}</h4>
+  <form method="post">
+    {{ field('Course code', 'code', d) }}
+    {{ field('Course name', 'name', d) }}
+    <div class="mb-3"><label class="form-label" for="description">Description</label>
+      <textarea class="form-control" id="description" name="description" rows="3">{{ d.get('description') or '' }}</textarea></div>
+    {{ select('Status', 'status', [('Active','Active'),('Inactive','Inactive')], d.get('status')) }}
+    <button class="btn btn-primary">Save</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin.courses') }}">Cancel</a>
+  </form>
+</div></div>
+{% endblock %}

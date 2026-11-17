@@ -1,0 +1,33 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, empty %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-3">Welcome, {{ g.user.full_name }}</h3>
+<div class="row g-3 mb-4">
+  {% for label, n in [('Available examinations', avail_exams|length), ('Available slots', avail_slots|length), ('Upcoming examinations', upcoming|length), ('Booked slots', booked|length), ('Published results', results|length)] %}
+  <div class="col-6 col-lg"><div class="card shadow-sm h-100"><div class="card-body"><div class="stat-card"><div class="num">{{ n }}</div></div><div class="text-muted small">{{ label }}</div></div></div></div>
+  {% endfor %}
+</div>
+<div class="row g-4">
+  <div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Available examinations</h5>
+    <table class="table table-sm mb-0"><tbody>
+      {% for e in avail_exams %}<tr><td>{{ e.name }}<div class="small text-muted">{{ e.course_code }} · {{ e.exam_type }} · book by {{ e.book_end|fdate }}</div></td>
+        <td class="text-end">{% if e.my_status %}{{ badge(e.my_status) }}{% else %}<a class="btn btn-sm btn-primary" href="{{ url_for('student.exam_view', exam_id=e.id) }}">View slots</a>{% endif %}</td></tr>
+      {% else %}{{ empty(2, 'No examinations are open for booking.') }}{% endfor %}
+    </tbody></table></div></div></div>
+  <div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Upcoming examinations</h5>
+    <table class="table table-sm mb-0"><tbody>
+      {% for b in upcoming %}<tr><td>{{ b.exam_name }}<div class="small text-muted">{{ b.examiner_name }}</div></td><td>{{ b.slot_date|fdate }}<div class="small text-muted">{{ b.start_time|ftime }}–{{ b.end_time|ftime }}</div></td></tr>
+      {% else %}{{ empty(2, 'Nothing scheduled.') }}{% endfor %}
+    </tbody></table></div></div></div>
+  <div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Available slots</h5>
+    <table class="table table-sm mb-0"><tbody>
+      {% for s in avail_slots[:6] %}<tr><td>{{ s.exam_name }}</td><td>{{ s.slot_date|fdate }} {{ s.start_time|ftime }}</td><td>{{ s.capacity - s.booked }} left</td><td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('student.exam_view', exam_id=s.exam_id) }}">Book</a></td></tr>
+      {% else %}{{ empty(4, 'No open slots right now.') }}{% endfor %}
+    </tbody></table></div></div></div>
+  <div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Published results</h5>
+    <table class="table table-sm mb-0"><tbody>
+      {% for r in results %}<tr><td>{{ r.exam_name }}</td><td class="fw-semibold">{{ r.total_marks|marks }} / {{ r.max_marks|marks }}</td></tr>
+      {% else %}{{ empty(2, 'No results published yet.') }}{% endfor %}
+    </tbody></table>{% if results %}<a class="small" href="{{ url_for('student.results') }}">See remarks &amp; breakdown</a>{% endif %}</div></div></div>
+</div>
+{% endblock %}

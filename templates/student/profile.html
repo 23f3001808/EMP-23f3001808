@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% from '_macros.html' import field %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="card shadow-sm col-md-7"><div class="card-body p-4">
+  <h4 class="mb-3">My profile</h4>
+  <div class="mb-3"><label class="form-label">Email</label><input class="form-control" value="{{ g.user.email }}" disabled></div>
+  <form method="post">
+    {{ field('Full name', 'full_name', d) }}
+    {{ field('Phone number', 'phone', d, 'tel', extra='pattern="\\+?[0-9]{10,13}" title="10 to 13 digits"') }}
+    {{ field('Department', 'department', d) }}
+    <h6 class="mt-4">Change password (optional)</h6>
+    {{ field('Current password', 'current_password', {}, 'password', False) }}
+    {{ field('New password', 'new_password', {}, 'password', False) }}
+    <button class="btn btn-primary">Save changes</button>
+  </form>
+</div></div>
+{% endblock %}

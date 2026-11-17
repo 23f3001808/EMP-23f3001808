@@ -1,0 +1,20 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, empty %}
+{% block title %}Slots{% endblock %}
+{% block content %}
+<h3 class="mb-3">All examination slots</h3>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-4"><input class="form-control" name="q" value="{{ q }}" placeholder="Search examination, examiner or ID"></div>
+  <div class="col-md-3"><select class="form-select" name="exam_id"><option value="">All examinations</option>
+    {% for e in exams %}<option value="{{ e.id }}" {{ 'selected' if e.id == exam_id }}>{{ e.name }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><select class="form-select" name="status"><option value="">All statuses</option>
+    {% for s in ['Available','Full','Cancelled','Completed'] %}<option {{ 'selected' if s == status }}>{{ s }}</option>{% endfor %}</select></div>
+  <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+</form>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead><tr><th>ID</th><th>Examination</th><th>Examiner</th><th>Date</th><th>Time</th><th>Seats</th><th>Status</th><th></th></tr></thead><tbody>
+  {% for s in slots %}
+  <tr><td>{{ s.id }}</td><td>{{ s.exam_name }} <span class="text-muted small">({{ s.course_code }})</span></td><td>{{ s.examiner_name }}</td><td>{{ s.slot_date|fdate }}</td><td>{{ s.start_time|ftime }}–{{ s.end_time|ftime }}</td><td>{{ s.booked }} / {{ s.capacity }}</td><td>{{ badge(s.status) }}</td>
+    <td class="text-end">{% if s.status in ('Available', 'Full') %}<a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.slot_examiner', slot_id=s.id) }}">Change examiner</a>{% endif %}</td></tr>
+  {% else %}{{ empty(8, 'No slots found.') }}{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

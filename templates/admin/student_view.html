@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, empty %}
+{% block title %}{{ st.full_name }}{% endblock %}
+{% block content %}
+<h3 class="mb-1">{{ st.full_name }}</h3>
+<div class="text-muted mb-3">STU{{ '%04d' % st.id }} · {{ st.email }} · {{ st.phone }} · {{ st.department }}</div>
+<div class="card shadow-sm"><div class="card-body"><h5>Booking history</h5>
+  <div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>#</th><th>Examination</th><th>Slot</th><th>Examiner</th><th>Status</th><th>Marks</th></tr></thead><tbody>
+  {% for b in bookings %}
+  <tr><td>{{ b.id }}</td><td>{{ b.exam_name }}</td><td>{{ b.slot_date|fdate }} {{ b.start_time|ftime }}</td><td>{{ b.examiner_name }}</td><td>{{ badge(b.status) }}</td><td>{{ b.total_marks|marks }}{% if b.total_marks is not none %} / {{ b.max_marks|marks }}{% endif %}</td></tr>
+  {% else %}{{ empty(6, 'No bookings yet.') }}{% endfor %}
+  </tbody></table></div></div></div>
+{% endblock %}

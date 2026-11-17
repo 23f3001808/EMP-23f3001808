@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, search, post_btn, empty %}
+{% block title %}Courses{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><h3 class="mb-0">Courses</h3>
+  <a class="btn btn-success" href="{{ url_for('admin.course_form') }}">+ New course</a></div>
+<div class="mb-3">{{ search(q, 'Search by code, name or ID') }}</div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead><tr><th>ID</th><th>Code</th><th>Name</th><th>Description</th><th>Exams</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody>
+  {% for c in courses %}
+  <tr><td>{{ c.id }}</td><td class="fw-semibold">{{ c.code }}</td><td>{{ c.name }}</td><td class="small text-muted">{{ (c.description or '')[:70] }}</td><td>{{ c.exam_count }}</td><td>{{ badge(c.status) }}</td>
+    <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.course_form', course_id=c.id) }}">Edit</a>
+      {{ post_btn(url_for('admin.course_delete', course_id=c.id), 'Delete', 'outline-danger', confirm='Delete this course?') }}</td></tr>
+  {% else %}{{ empty(7, 'No courses found.') }}{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

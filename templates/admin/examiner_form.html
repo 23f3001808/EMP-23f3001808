@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% from '_macros.html' import field %}
+{% block title %}Add examiner{% endblock %}
+{% block content %}
+<div class="card shadow-sm col-md-7"><div class="card-body p-4">
+  <h4 class="mb-3">Add examiner</h4>
+  <form method="post">
+    {{ field('Full name', 'full_name', d) }}
+    {{ field('Email', 'email', d, 'email') }}
+    {{ field('Temporary password (min 6 characters)', 'password', {}, 'password') }}
+    {{ field('Phone number', 'phone', d, 'tel', extra='pattern="\\+?[0-9]{10,13}" title="10 to 13 digits"') }}
+    {{ field('Department', 'department', d) }}
+    <button class="btn btn-primary">Add &amp; approve</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin.examiners') }}">Cancel</a>
+  </form>
+</div></div>
+{% endblock %}

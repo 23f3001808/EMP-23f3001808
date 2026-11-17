@@ -1,0 +1,20 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, post_btn, empty %}
+{% block title %}{{ exam.name }}{% endblock %}
+{% block content %}
+<h3 class="mb-1">{{ exam.name }} {{ badge(exam.status) }}</h3>
+<p class="text-muted">{{ exam.course_code }} – {{ exam.course_name }} · {{ exam.exam_type }} · {{ exam.duration }} min · {{ exam.max_marks|marks }} marks · booking {{ exam.book_start|fdate }} → {{ exam.book_end|fdate }}</p>
+{% if live %}<div class="alert alert-success">You are booked: {{ live.slot_date|fdate }}, {{ live.start_time|ftime }}–{{ live.end_time|ftime }} with {{ live.examiner_name }} ({{ live.status }}).</div>{% endif %}
+{% if not live and not can_book %}<div class="alert alert-info">Booking is not open for this examination right now.</div>{% endif %}
+<div class="row g-4">
+  <div class="col-lg-8"><div class="card shadow-sm"><div class="card-body"><h5>Available slots</h5>
+    <div class="table-responsive"><table class="table table-sm align-middle mb-0"><thead><tr><th>Date</th><th>Time</th><th>Examiner</th><th>Seats left</th><th></th></tr></thead><tbody>
+      {% for s in slots %}
+      <tr><td>{{ s.slot_date|fdate }}</td><td>{{ s.start_time|ftime }}–{{ s.end_time|ftime }}</td><td>{{ s.examiner_name }}</td><td>{{ s.capacity - s.booked }} / {{ s.capacity }}</td>
+        <td class="text-end">{% if can_book %}{{ post_btn(url_for('student.book', slot_id=s.id), 'Book', 'primary') }}{% endif %}</td></tr>
+      {% else %}{{ empty(5, 'No available slots.') }}{% endfor %}
+    </tbody></table></div></div></div></div>
+  <div class="col-lg-4"><div class="card shadow-sm"><div class="card-body"><h5>Evaluation criteria</h5>
+    <ul class="list-unstyled mb-0">{% for r in rubrics %}<li class="mb-1">{{ r.criterion }} <span class="text-muted small">({{ r.max_marks|marks }} marks)</span></li>{% else %}<li class="text-muted">Single overall mark.</li>{% endfor %}</ul>
+  </div></div></div>
+</div>
+{% endblock %}

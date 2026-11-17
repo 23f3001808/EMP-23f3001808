@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, empty %}
+{% block title %}Examinations{% endblock %}
+{% block content %}
+<h3 class="mb-3">Examinations</h3>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-5"><input class="form-control" name="q" value="{{ q }}" placeholder="Search by examination name, course code or ID"></div>
+  <div class="col-md-3"><select class="form-select" name="type"><option value="">All types</option>{% for t in types %}<option {{ 'selected' if t == etype }}>{{ t }}</option>{% endfor %}</select></div>
+  <div class="col-md-3"><select class="form-select" name="course"><option value="">All courses</option>{% for c in courses %}<option value="{{ c.id }}" {{ 'selected' if c.id == course }}>{{ c.code }}</option>{% endfor %}</select></div>
+  <div class="col-md-1"><button class="btn btn-primary w-100">Go</button></div>
+</form>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead><tr><th>Course</th><th>Examination</th><th>Type</th><th>Duration</th><th>Marks</th><th>Booking window</th><th>Status</th><th></th></tr></thead><tbody>
+  {% for e in exams %}
+  <tr><td>{{ e.course_code }}</td><td class="fw-semibold">{{ e.name }}</td><td>{{ e.exam_type }}</td><td>{{ e.duration }} min</td><td>{{ e.max_marks|marks }}</td><td class="small">{{ e.book_start|fdate }} → {{ e.book_end|fdate }}</td>
+    <td>{{ badge(e.status) }}{% if e.my_status %} {{ badge(e.my_status) }}{% endif %}</td>
+    <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('student.exam_view', exam_id=e.id) }}">View</a></td></tr>
+  {% else %}{{ empty(8, 'No examinations match your search.') }}{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

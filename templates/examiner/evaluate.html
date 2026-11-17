@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Evaluate{% endblock %}
+{% block content %}
+<div class="card shadow-sm col-lg-8"><div class="card-body p-4">
+  <h4 class="mb-1">Evaluate {{ b.student_name }}</h4>
+  <p class="text-muted">{{ b.exam_name }} · {{ b.slot_date|fdate }} {{ b.start_time|ftime }}–{{ b.end_time|ftime }} · maximum {{ b.max_marks|marks }} marks</p>
+  <form method="post">
+    {% if rubrics %}
+    <table class="table align-middle"><thead><tr><th>Criterion</th><th>Weight</th><th style="width:170px">Awarded (max)</th></tr></thead><tbody>
+      {% for r in rubrics %}
+      <tr><td>{{ r.criterion }}<div class="small text-muted">{{ r.description }}</div></td><td>{{ r.weightage|marks }}</td>
+        <td><div class="input-group"><input class="form-control" type="number" name="m_{{ r.id }}" min="0" max="{{ r.max_marks }}" step="any" required value="{{ d.get('m_' ~ r.id) if d.get('m_' ~ r.id) is not none else '' }}"><span class="input-group-text">/ {{ r.max_marks|marks }}</span></div></td></tr>
+      {% endfor %}
+    </tbody></table>
+    <p class="small text-muted">The total is calculated automatically from the weightage and scaled to {{ b.max_marks|marks }}.</p>
+    {% else %}
+    <div class="mb-3"><label class="form-label" for="total">Total marks (max {{ b.max_marks|marks }})</label>
+      <input class="form-control" id="total" type="number" name="total" min="0" max="{{ b.max_marks }}" step="any" required value="{{ d.get('total') if d.get('total') is not none else '' }}"></div>
+    {% endif %}
+    <div class="mb-3"><label class="form-label" for="remarks">Remarks / feedback</label>
+      <textarea class="form-control" id="remarks" name="remarks" rows="3">{{ d.get('remarks') or '' }}</textarea></div>
+    <button class="btn btn-primary">Submit evaluation</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('examiner.slots') }}">Cancel</a>
+  </form>
+</div></div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, search %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h3 class="mb-3">Search</h3>
+<div class="mb-4">{{ search(q, 'Name, email, ID, course code, examination…') }}</div>
+{% if q %}
+  {% set nothing = not (res.students or res.examiners or res.exams or res.bookings) %}
+  {% if nothing %}<div class="alert alert-info">No results for “{{ q }}”.</div>{% endif %}
+  {% if res.students %}<h5>Students</h5><div class="card shadow-sm mb-4"><table class="table table-sm mb-0"><tbody>
+    {% for s in res.students %}<tr><td>STU{{ '%04d' % s.id }}</td><td><a href="{{ url_for('admin.student_view', student_id=s.id) }}">{{ s.full_name }}</a></td><td>{{ s.email }}</td><td>{{ s.department }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+  {% if res.examiners %}<h5>Examiners</h5><div class="card shadow-sm mb-4"><table class="table table-sm mb-0"><tbody>
+    {% for s in res.examiners %}<tr><td>EXM{{ '%04d' % s.id }}</td><td><a href="{{ url_for('admin.examiner_view', examiner_id=s.id) }}">{{ s.full_name }}</a></td><td>{{ s.email }}</td><td>{{ s.department }}</td><td>{{ badge(s.status) }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+  {% if res.exams %}<h5>Examinations</h5><div class="card shadow-sm mb-4"><table class="table table-sm mb-0"><tbody>
+    {% for e in res.exams %}<tr><td>#{{ e.id }}</td><td><a href="{{ url_for('admin.exam_view', exam_id=e.id) }}">{{ e.name }}</a></td><td>{{ e.course_code }}</td><td>{{ e.exam_type }}</td><td>{{ badge(e.status) }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+  {% if res.bookings %}<h5>Bookings</h5><div class="card shadow-sm mb-4"><table class="table table-sm mb-0"><tbody>
+    {% for b in res.bookings %}<tr><td>#{{ b.id }}</td><td>{{ b.student_name }}</td><td>{{ b.exam_name }}</td><td>{{ b.slot_date|fdate }} {{ b.start_time|ftime }}</td><td>{{ badge(b.status) }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% endif %}
+{% endblock %}

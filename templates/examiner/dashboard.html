@@ -1,0 +1,29 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, empty %}
+{% block title %}Examiner Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-3">Welcome, {{ g.user.full_name }}</h3>
+<div class="row g-3 mb-4">
+  {% for label, n in [('Assigned examinations', exams|length), ('Slots created', slots|length), ('Students booked', booked_total), ('Pending evaluations', pending_evals|length)] %}
+  <div class="col-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body"><div class="stat-card"><div class="num">{{ n }}</div></div><div class="text-muted small">{{ label }}</div></div></div></div>
+  {% endfor %}
+</div>
+<div class="row g-4">
+  <div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Assigned examinations</h5>
+    <table class="table table-sm mb-0"><tbody>
+      {% for e in exams %}<tr><td>{{ e.name }}<div class="small text-muted">{{ e.course_code }} · {{ e.exam_type }}</div></td><td>{{ badge(e.status) }}</td>
+        <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('examiner.exam_slots', exam_id=e.id) }}">Slots</a></td></tr>
+      {% else %}{{ empty(3, 'No examinations assigned yet.') }}{% endfor %}
+    </tbody></table></div></div></div>
+  <div class="col-lg-6"><div class="card shadow-sm"><div class="card-body"><h5>Pending evaluations</h5>
+    <table class="table table-sm mb-0"><tbody>
+      {% for b in pending_evals %}<tr><td>{{ b.student_name }}<div class="small text-muted">{{ b.exam_name }} · {{ b.slot_date|fdate }} {{ b.start_time|ftime }}</div></td>
+        <td class="text-end"><a class="btn btn-sm btn-primary" href="{{ url_for('examiner.evaluate', booking_id=b.id) }}">Evaluate</a></td></tr>
+      {% else %}{{ empty(2, 'Nothing pending.') }}{% endfor %}
+    </tbody></table></div></div></div>
+  <div class="col-12"><div class="card shadow-sm"><div class="card-body"><h5>My slots</h5>
+    <div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Examination</th><th>Date</th><th>Time</th><th>Booked</th><th>Status</th></tr></thead><tbody>
+      {% for s in slots %}<tr><td>{{ s.exam_name }}</td><td>{{ s.slot_date|fdate }}</td><td>{{ s.start_time|ftime }}–{{ s.end_time|ftime }}</td><td>{{ s.booked }} / {{ s.capacity }}</td><td>{{ badge(s.status) }}</td></tr>
+      {% else %}{{ empty(5, 'You have not created any slots yet.') }}{% endfor %}
+    </tbody></table></div></div></div></div>
+</div>
+{% endblock %}

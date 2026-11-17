@@ -1,0 +1,7 @@
+body { background: #f4f6fa; }
+.card { border: 0; border-radius: .75rem; }
+.stat-card { text-decoration: none; color: inherit; transition: transform .1s; }
+.stat-card:hover { transform: translateY(-2px); }
+.stat-card .num { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+.table > :not(caption) > * > * { vertical-align: middle; }
+details > summary { cursor: pointer; }

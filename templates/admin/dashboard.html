@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, post_btn, empty %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-3">Admin dashboard</h3>
+<div class="row g-3 mb-4">
+  {% for label, n, ep in stats %}
+  <div class="col-6 col-md-4 col-lg-2"><a class="card stat-card shadow-sm h-100" href="{{ url_for(ep) }}"><div class="card-body">
+    <div class="num">{{ n }}</div><div class="text-muted small">{{ label }}</div></div></a></div>
+  {% endfor %}
+</div>
+<div class="row g-4">
+  <div class="col-lg-5"><div class="card shadow-sm"><div class="card-body">
+    <h5>Examiner approval requests</h5>
+    <table class="table table-sm mb-0"><tbody>
+      {% for x in pending %}
+      <tr><td><a href="{{ url_for('admin.examiner_view', examiner_id=x.id) }}">{{ x.full_name }}</a><div class="small text-muted">{{ x.department }}</div></td>
+        <td class="text-end">{{ post_btn(url_for('admin.examiner_status', examiner_id=x.id), 'Approve', 'success', 'action', 'approve') }}
+          {{ post_btn(url_for('admin.examiner_status', examiner_id=x.id), 'Reject', 'outline-danger', 'action', 'reject') }}</td></tr>
+      {% else %}{{ empty(2, 'No pending requests.') }}{% endfor %}
+    </tbody></table>
+  </div></div></div>
+  <div class="col-lg-7"><div class="card shadow-sm"><div class="card-body">
+    <h5>Latest bookings</h5>
+    <table class="table table-sm mb-0"><thead><tr><th>#</th><th>Student</th><th>Examination</th><th>Slot</th><th>Status</th></tr></thead><tbody>
+      {% for b in recent %}
+      <tr><td>{{ b.id }}</td><td>{{ b.student_name }}</td><td>{{ b.exam_name }}</td><td>{{ b.slot_date|fdate }} {{ b.start_time|ftime }}</td><td>{{ badge(b.status) }}</td></tr>
+      {% else %}{{ empty(5, 'No bookings yet.') }}{% endfor %}
+    </tbody></table>
+  </div></div></div>
+</div>
+{% endblock %}

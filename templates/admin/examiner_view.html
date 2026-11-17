@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge, post_btn, empty %}
+{% block title %}{{ ex.full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+  <div><h3 class="mb-1">{{ ex.full_name }} {{ badge(ex.status) }}</h3>
+    <div class="text-muted">EXM{{ '%04d' % ex.id }} · {{ ex.email }} · {{ ex.phone }} · {{ ex.department }}</div></div>
+  <div>{% set back = url_for('admin.examiner_view', examiner_id=ex.id) %}
+    {% if ex.status == 'Pending' %}
+      <form method="post" action="{{ url_for('admin.examiner_status', examiner_id=ex.id) }}" class="d-inline"><input type="hidden" name="next" value="{{ back }}"><button class="btn btn-success" name="action" value="approve">Approve</button> <button class="btn btn-outline-danger" name="action" value="reject">Reject</button></form>
+    {% elif ex.status == 'Approved' %}
+      <form method="post" action="{{ url_for('admin.examiner_status', examiner_id=ex.id) }}" class="d-inline"><input type="hidden" name="next" value="{{ back }}"><button class="btn btn-outline-danger" name="action" value="deactivate">Deactivate</button></form>
+    {% else %}
+      <form method="post" action="{{ url_for('admin.examiner_status', examiner_id=ex.id) }}" class="d-inline"><input type="hidden" name="next" value="{{ back }}"><button class="btn btn-outline-success" name="action" value="reactivate">Reactivate</button></form>
+    {% endif %}</div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-5"><div class="card shadow-sm"><div class="card-body"><h5>Assigned examinations</h5>
+    <table class="table table-sm mb-0"><tbody>{% for e in exams %}<tr><td><a href="{{ url_for('admin.exam_view', exam_id=e.id) }}">{{ e.name }}</a></td><td>{{ e.course_code }}</td><td>{{ badge(e.status) }}</td></tr>{% else %}{{ empty(3) }}{% endfor %}</tbody></table></div></div></div>
+  <div class="col-lg-7"><div class="card shadow-sm"><div class="card-body"><h5>Slots</h5>
+    <table class="table table-sm mb-0"><tbody>{% for s in slots %}<tr><td>{{ s.exam_name }}</td><td>{{ s.slot_date|fdate }} {{ s.start_time|ftime }}–{{ s.end_time|ftime }}</td><td>{{ s.booked }}/{{ s.capacity }}</td><td>{{ badge(s.status) }}</td></tr>{% else %}{{ empty(4) }}{% endfor %}</tbody></table></div></div></div>
+</div>
+{% endblock %}

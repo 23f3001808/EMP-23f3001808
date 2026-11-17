@@ -1,0 +1,27 @@
+{% extends 'base.html' %}{% from '_macros.html' import field, select %}
+{% block title %}{{ 'Edit' if exam else 'New' }} examination{% endblock %}
+{% block content %}
+<div class="card shadow-sm col-lg-8"><div class="card-body p-4">
+  <h4 class="mb-3">{{ 'Edit examination' if exam else 'New examination' }}</h4>
+  <form method="post">
+    <div class="mb-3"><label class="form-label" for="course_id">Course</label>
+      <select class="form-select" id="course_id" name="course_id" required>
+        <option value="">Select…</option>
+        {% for c in courses %}<option value="{{ c.id }}" {{ 'selected' if c.id|string == d.get('course_id')|string }}>{{ c.code }} – {{ c.name }}{{ ' (inactive)' if c.status != 'Active' }}</option>{% endfor %}
+      </select></div>
+    {{ field('Examination name', 'name', d) }}
+    <div class="row"><div class="col-md-4"><div class="mb-3"><label class="form-label" for="exam_type">Type</label>
+        <select class="form-select" id="exam_type" name="exam_type" required><option value="">Select…</option>
+          {% for t in types %}<option {{ 'selected' if t == d.get('exam_type') }}>{{ t }}</option>{% endfor %}</select></div></div>
+      <div class="col-md-4">{{ field('Duration (minutes)', 'duration', d, 'number', extra='min="1"') }}</div>
+      <div class="col-md-4">{{ field('Maximum marks', 'max_marks', d, 'number', extra='min="1" step="any"') }}</div></div>
+    <h6 class="mt-2">Timeline</h6>
+    <div class="row"><div class="col-md-6">{{ field('Slot creation start', 'slot_create_start', d, 'date') }}</div>
+      <div class="col-md-6">{{ field('Slot creation end', 'slot_create_end', d, 'date') }}</div>
+      <div class="col-md-6">{{ field('Student booking start', 'book_start', d, 'date') }}</div>
+      <div class="col-md-6">{{ field('Student booking end', 'book_end', d, 'date') }}</div></div>
+    <button class="btn btn-primary">Save</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin.exam_view', exam_id=exam.id) if exam else url_for('admin.exams') }}">Cancel</a>
+  </form>
+</div></div>
+{% endblock %}

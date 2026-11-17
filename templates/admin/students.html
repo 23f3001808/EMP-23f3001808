@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% from '_macros.html' import search, empty %}
+{% block title %}Students{% endblock %}
+{% block content %}
+<h3 class="mb-3">Students</h3>
+<div class="mb-3">{{ search(q, 'Search by name, email, department or ID (e.g. STU0003)') }}</div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Department</th><th>Bookings</th></tr></thead><tbody>
+  {% for s in students %}
+  <tr><td>STU{{ '%04d' % s.id }}</td><td><a href="{{ url_for('admin.student_view', student_id=s.id) }}">{{ s.full_name }}</a></td><td>{{ s.email }}</td><td>{{ s.phone }}</td><td>{{ s.department }}</td><td>{{ s.booking_count }}</td></tr>
+  {% else %}{{ empty(6, 'No students found.') }}{% endfor %}
+</tbody></table></div></div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}{% from '_macros.html' import badge %}
+{% block title %}Slots & students{% endblock %}
+{% block content %}
+<h3 class="mb-3">My slots &amp; booked students</h3>
+{% for s in slots %}
+<div class="card shadow-sm mb-3"><div class="card-body">
+  <div class="d-flex flex-wrap justify-content-between">
+    <div><strong>{{ s.exam_name }}</strong> <span class="text-muted">· {{ s.slot_date|fdate }}, {{ s.start_time|ftime }}–{{ s.end_time|ftime }}</span></div>
+    <div>{{ s.booked }} / {{ s.capacity }} booked {{ badge(s.status) }}</div>
+  </div>
+  <table class="table table-sm mt-2 mb-0"><tbody>
+    {% for b in students[s.id] %}
+    <tr><td>{{ b.student_name }}<div class="small text-muted">{{ b.student_email }}</div></td><td>{{ badge(b.status) }}</td>
+      <td>{% if b.total_marks is not none %}{{ b.total_marks|marks }} / {{ b.max_marks|marks }}{% else %}<span class="text-muted">Not evaluated</span>{% endif %}</td>
+      <td class="text-end"><a class="btn btn-sm {{ 'btn-outline-primary' if b.total_marks is not none else 'btn-primary' }}" href="{{ url_for('examiner.evaluate', booking_id=b.id) }}">{{ 'Edit evaluation' if b.total_marks is not none else 'Evaluate' }}</a></td></tr>
+    {% else %}<tr><td class="text-muted">No students booked yet.</td></tr>{% endfor %}
+  </tbody></table>
+</div></div>
+{% else %}<div class="alert alert-info">You have no slots yet. Create some from “My Examinations”.</div>{% endfor %}
+{% endblock %}

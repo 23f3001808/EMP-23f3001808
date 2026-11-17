@@ -1,0 +1,38 @@
+{% macro badge(s) -%}
+{%- set m = {'Active':'success','Approved':'success','Available':'success','Booked':'primary','Booking Open':'success','Slot Creation':'info','Draft':'secondary','Closed':'warning','Completed':'dark','Full':'warning','Cancelled':'danger','Inactive':'secondary','Pending':'warning','Rejected':'danger','Deactivated':'danger'} -%}
+<span class="badge text-bg-{{ m.get(s, 'secondary') }}">{{ s }}</span>
+{%- endmacro %}
+
+{% macro field(label, name, d, type='text', required=True, extra='') %}
+<div class="mb-3">
+  <label class="form-label" for="{{ name }}">{{ label }}</label>
+  <input class="form-control" id="{{ name }}" name="{{ name }}" type="{{ type }}" value="{{ d.get(name) if d.get(name) is not none else '' }}" {% if required %}required{% endif %} {{ extra|safe }}>
+</div>
+{% endmacro %}
+
+{% macro select(label, name, options, selected, required=True) %}
+<div class="mb-3">
+  <label class="form-label" for="{{ name }}">{{ label }}</label>
+  <select class="form-select" id="{{ name }}" name="{{ name }}" {% if required %}required{% endif %}>
+    {% if not selected %}<option value="">Select…</option>{% endif %}
+    {% for v, t in options %}<option value="{{ v }}" {% if v|string == selected|string %}selected{% endif %}>{{ t }}</option>{% endfor %}
+  </select>
+</div>
+{% endmacro %}
+
+{% macro search(q, placeholder='Search…') %}
+<form class="d-flex gap-2" method="get">
+  <input class="form-control" name="q" value="{{ q }}" placeholder="{{ placeholder }}">
+  <button class="btn btn-primary">Search</button>
+</form>
+{% endmacro %}
+
+{% macro post_btn(url, label, cls='outline-secondary', name='', value='', confirm='') %}
+<form method="post" action="{{ url }}" class="d-inline" {% if confirm %}onsubmit="return confirm('{{ confirm }}')"{% endif %}>
+  <button class="btn btn-sm btn-{{ cls }}" {% if name %}name="{{ name }}" value="{{ value }}"{% endif %}>{{ label }}</button>
+</form>
+{% endmacro %}
+
+{% macro empty(cols, text='Nothing to show yet.') %}
+<tr><td colspan="{{ cols }}" class="text-center text-muted py-4">{{ text }}</td></tr>
+{% endmacro %}

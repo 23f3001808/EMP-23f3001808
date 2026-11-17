@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% from '_macros.html' import empty %}
+{% block title %}Reschedule booking{% endblock %}
+{% block content %}
+<h3 class="mb-1">Reschedule booking #{{ b.id }}</h3>
+<p class="text-muted">{{ b.student_name }} · {{ b.exam_name }} · currently {{ b.slot_date|fdate }} {{ b.start_time|ftime }}–{{ b.end_time|ftime }} with {{ b.examiner_name }}</p>
+<div class="card shadow-sm"><div class="card-body">
+  <form method="post">
+    <table class="table table-sm align-middle"><thead><tr><th></th><th>Date</th><th>Time</th><th>Examiner</th><th>Seats left</th></tr></thead><tbody>
+      {% for s in options %}
+      <tr><td><input class="form-check-input" type="radio" name="slot_id" value="{{ s.id }}" required></td><td>{{ s.slot_date|fdate }}</td><td>{{ s.start_time|ftime }}–{{ s.end_time|ftime }}</td><td>{{ s.examiner_name }}</td><td>{{ s.capacity - s.booked }}</td></tr>
+      {% else %}{{ empty(5, 'No other available slots for this examination.') }}{% endfor %}
+    </tbody></table>
+    {% if options %}<button class="btn btn-primary">Move booking</button>{% endif %}
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin.bookings') }}">Cancel</a>
+  </form>
+</div></div>
+{% endblock %}
